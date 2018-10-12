@@ -44,7 +44,7 @@ end
 
 Pi = Pi + p;
 figure(fig_nr), subplot(1,3,1), colormap(gray)
-imagesc((IM - Pi)', [0 1])
+imagesc((IM - Pi), [0 1])
 title(strcat('Bernouilli \pi = ',num2str(p_const), effect))
 xlabel(xlab)
 ylabel(ylab)
@@ -61,15 +61,15 @@ if luPi < n*d
   end
 end
     
-X = zeros(n*d,1);
+X = false(n*d,1);
 for i = 1: luPi
   X(idx{i}) = random('Binomial', 1, uPi(i)*ones(1,lidx(i))); % cell i, gene j
 end
 X = vec2mat(X,n);
 X = X';
-  
+
 subplot(1,3,2), colormap(gray)
-imagesc((IM - X)', [0 1])
+imagesc((IM - X), [0 1])
 title('X')
 xlabel(xlab)
 ylabel(ylab)
