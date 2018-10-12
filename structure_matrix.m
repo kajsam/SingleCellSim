@@ -1,4 +1,4 @@
-function S = structure_matrix(n,d,C,G,noise)
+function S = structure_matrix(n,d,C,G)
 
 % Kajsa Mollersen, October 8th 2018
 
@@ -15,7 +15,6 @@ function S = structure_matrix(n,d,C,G,noise)
 
 % C(b)  : cell entries for block b of s_{ij} = 1
 % G(b)  : gene entries for block b of s_{ij} = 1
-% noise : cell and gene entries for P(X_{ij} = 1) = 0.5
 
 B = length(C); % The number of blocks
 
@@ -28,13 +27,3 @@ for b = 1 : B
   g(G{b}) = 1;
   S = S | c*g;
 end
-
-% I haven't incorporated the noise yet
-
-  
-    
-    
-  
-
-
-
