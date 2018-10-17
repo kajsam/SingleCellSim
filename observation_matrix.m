@@ -1,4 +1,4 @@
-function X = observation_matrix(S, p_const, p, fig_nr, xlab, ylab)
+function [X, Pi] = observation_matrix(S, p_const, p)
 
 % Kajsa Mollersen (kajsa.mollersen@uit.no) October 9th 2018
 
@@ -17,7 +17,7 @@ rng('default') % for reproducibility
 % probabilty of success (x_ij = 1)
 Pi = (1 - S) + (2.*S - 1).*p_const;
 [n, d] = size(Pi);
-IM = ones(n,d);
+% IM = ones(n,d); % Confusing
 
 % No cell or gene effects: the probability is a scalar
 if all(size(p) == [1 1])
@@ -38,17 +38,11 @@ elseif  any(size(p) == d) % Gene effect: the probability is a 1xd vector
 elseif all(size(p) == [n d]) % Cell and gene effect: the probability is a nxd matrix
   effect = '+ gene and cell effect';
 else
-  'Wrong dimension of p'
+  disp('Wrong dimension of p')
   return
 end
 
 Pi = Pi + p;
-figure(fig_nr), subplot(1,3,1), colormap(gray)
-imagesc((IM - Pi), [0 1])
-title(strcat('Bernouilli \pi = ',num2str(p_const), effect))
-xlabel(xlab)
-ylabel(ylab)
-drawnow
 
 uPi = unique(Pi);
 luPi = length(uPi);
@@ -68,8 +62,3 @@ end
 X = vec2mat(X,n);
 X = X';
 
-subplot(1,3,2), colormap(gray)
-imagesc((IM - X), [0 1])
-title('X')
-xlabel(xlab)
-ylabel(ylab)
