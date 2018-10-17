@@ -1,4 +1,4 @@
-function X = simulation_greedy_2_cell(fig_nr)
+function [X, p] = simulation_greedy_2_cell(fig_nr)
 
 % Kajsa Mollersen (kajsa.mollersen@uit.no), October 9th 2018
 
@@ -15,9 +15,9 @@ d = 5000;
 rng('default')
 clf(figure(fig_nr))
 
-IM = ones(n,d);
-xlab = 'Cells';
-ylab = 'Genes';
+% IM = ones(n,d); This is just confusing
+xlab = 'Genes';
+ylab = 'Cells';
 
 %% The structure matrix
 
@@ -33,20 +33,20 @@ G{3} = floor(0.4*d)+1: ceil(0.55*d);
 
 S = structure_matrix(n,d,C,G);
 
-figure(1), colormap(gray)
-imagesc((IM - S)', [0 1])
-title('S')
-set(gca,'xaxisLocation','top')
-xlabel(xlab)
-ylabel(ylab)
-drawnow
+if fig_nr
+  figure(fig_nr), subplot(1,4,1), colormap(gray)
+  imagesc(S)
+  title('S')
+  set(gca,'xaxisLocation','top')
+  xlabel(xlab)
+  ylabel(ylab)
+  drawnow
+end
 
 %% The Bernoulli parameter matrix. 
 % Each entry gives defines the Bernoulli distribution from which x_{ij} is drawn. 
 
 p_const = 0.8; % An overall probability of X_{ij} = s_{ij}
-
-p = 0; % The cell and/or gene effect
 
 block = 3;
 distr = 'Normal';
@@ -54,10 +54,24 @@ param = [0 0.15];
 
 p = cell_gene_effect(distr, param, block, p_const, n);
 
-figure(fig_nr), subplot(1,3,3) , histogram(p,100), title(strcat('Truncated ',{' '}, distr))
+% figure(fig_nr), subplot(1,4,2), imagesc(repmat(p,1,10)), colormap(gray)
+
+figure(fig_nr), subplot(1,4,2) , histogram(p,100), title(strcat('Truncated ',{' '}, distr))
 
 %% The simulated observation matrix
-X = observation_matrix(S, p_const, p, fig_nr, xlab, ylab);
+[X, Pi] = observation_matrix(S, p_const, p);
+
+figure(fig_nr), subplot(1,4,3), imagesc(Pi, [0 1]), colormap(gray)
+title(strcat('Bernouilli \pi = ',num2str(p_const)))
+xlabel(xlab)
+ylabel(ylab)
+drawnow
+
+figure(fig_nr), subplot(1,4,4), colormap(gray)
+imagesc(X, [0 1])
+title('X')
+xlabel(xlab)
+ylabel(ylab)
 
 
 
