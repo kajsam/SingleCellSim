@@ -23,6 +23,8 @@ Pi = (1 - S) + (2.*S - 1).*p_const;
 if all(size(p) == [1 1])
   p = p.*zeros(n,d);
   effect = 'random effect';
+elseif all(size(p) == [n d]) % Cell and gene effect: the probability is a nxd matrix
+  effect = '+ gene and cell effect';
 elseif any(size(p) == n) % Cell effect: the probability is a nx1 vector
   if size(p,2) == n
     p = p';
@@ -35,29 +37,33 @@ elseif  any(size(p) == d) % Gene effect: the probability is a 1xd vector
   end
   p = ones(n,1)*p;
   effect = ' + gene effect';
-elseif all(size(p) == [n d]) % Cell and gene effect: the probability is a nxd matrix
-  effect = '+ gene and cell effect';
 else
   disp('Wrong dimension of p')
   return
 end
 
 Pi = Pi + p;
+find(Pi>1)
+find(Pi<0)
+figure, imagesc(Pi), colormap(gray)
 
-uPi = unique(Pi);
-luPi = length(uPi);
-if luPi < n*d
-  idx = cell(1,luPi);
-  lidx = zeros(1,luPi);
-  for i = 1: luPi
-    idx{i} = find(Pi==uPi(i));
-    lidx(i) = length(idx{i});
-  end
-end
+% uPi = unique(Pi);
+% luPi = length(uPi);
+% if luPi < n*d
+%   idx = cell(1,luPi);
+%   lidx = zeros(1,luPi);
+%   for i = 1: luPi
+%     idx{i} = find(Pi==uPi(i));
+%     lidx(i) = length(idx{i});
+%   end
+% end
     
 X = false(n*d,1);
-for i = 1: luPi
-  X(idx{i}) = random('Binomial', 1, uPi(i)*ones(1,lidx(i))); % cell i, gene j
+% for i = 1: luPi
+%   X(idx{i}) = random('Binomial', 1, uPi(i)*ones(1,lidx(i))); % cell i, gene j
+% end
+for i = 1: n*d
+  X(i) = random('Binomial', 1, Pi(i)); % cell i, gene j
 end
 X = vec2mat(X,n);
 X = X';
